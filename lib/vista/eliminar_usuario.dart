@@ -22,7 +22,7 @@ class EliminarUsuario {
           ),
           TextButton(
             onPressed: () async {
-              await controlador.eliminarUsuario(usuario.id);
+              await controlador.eliminarUsuario(usuario.id!);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('Usuario eliminado con éxito')),
               );

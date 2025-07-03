@@ -39,7 +39,7 @@ class ModificarUsuario extends StatelessWidget {
                   nombre: nombreController.text,
                   email: emailController.text,
                 );
-                await _controlador.editarUsuario(usuario.id, usuarioActualizado);
+                await _controlador.editarUsuario(usuario.id!, usuarioActualizado);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Usuario editado con éxito')),
                 );

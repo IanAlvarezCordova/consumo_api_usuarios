@@ -1,18 +1,29 @@
 import 'package:flutter/material.dart';
 import '../modelo/Usuario.dart';
 import '../controlador/usuariocontroller.dart';
-
-class AgregarUsuario extends StatelessWidget {
+class AgregarUsuario extends StatefulWidget {
   final VoidCallback refrescarLista;
-  final UsuarioControlador _controlador = UsuarioControlador();
 
   AgregarUsuario({super.key, required this.refrescarLista});
 
   @override
-  Widget build(BuildContext context) {
-    final nombreController = TextEditingController();
-    final emailController = TextEditingController();
+  _AgregarUsuarioState createState() => _AgregarUsuarioState();
+}
 
+class _AgregarUsuarioState extends State<AgregarUsuario> {
+  final UsuarioControlador _controlador = UsuarioControlador();
+  final nombreController = TextEditingController();
+  final emailController = TextEditingController();
+
+  @override
+  void dispose() {
+    nombreController.dispose();
+    emailController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Agregar Usuario'),
@@ -34,16 +45,21 @@ class AgregarUsuario extends StatelessWidget {
             ElevatedButton(
               onPressed: () async {
                 final nuevoUsuario = Usuario(
-                  id: 0,
                   nombre: nombreController.text,
                   email: emailController.text,
                 );
-                await _controlador.crearUsuario(nuevoUsuario);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Usuario agregado con éxito')),
-                );
-                refrescarLista();
-                Navigator.pop(context);
+                try {
+                  final usuarioCreado = await _controlador.crearUsuario(nuevoUsuario);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Usuario agregado con éxito: ${usuarioCreado.nombre}')),
+                  );
+                  widget.refrescarLista();
+                  Navigator.pop(context);
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error al agregar el usuario: $e')),
+                  );
+                }
               },
               child: Text('Agregar'),
             ),

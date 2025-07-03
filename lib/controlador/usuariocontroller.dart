@@ -5,7 +5,7 @@ import '../modelo/Usuario.dart';
 class UsuarioControlador {
 
   // Base URL
-  final String apiURL = 'http://localhost:9090/api/usuarios';
+  final String apiURL = 'https://avanzadas-api-crud.onrender.com/api/usuarios';
 
   // Obtener todos los usuarios
   Future<List<Usuario>> obtenerUsuarios() async {
@@ -33,17 +33,22 @@ class UsuarioControlador {
 
   // Crear un nuevo usuario
   Future<Usuario> crearUsuario(Usuario usuario) async {
-    final response = await http.post(
-      Uri.parse(apiURL),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(usuario.toJson()), // Convertir el usuario a JSON
-    );
-    if (response.statusCode == 201) {
-      return Usuario.fromJson(json.decode(response.body));
-    } else {
-      throw Exception('Error al crear el usuario');
+    try {
+      final response = await http.post(
+        Uri.parse(apiURL),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(usuario.toJson()),
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return Usuario.fromJson(json.decode(response.body));
+      } else {
+        throw Exception('Error al crear el usuario: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error de red al crear el usuario: $e');
     }
   }
+
 
   // Eliminar un usuario
   Future<void> eliminarUsuario(int id) async {
